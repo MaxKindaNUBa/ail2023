@@ -2,7 +2,7 @@ from tkinter import Tk, PhotoImage
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
 from tkinter.ttk import Frame, Label, Entry
-
+from sqlConnectors import session_info
 
 class mainWindow(Tk):
     def __init__(self):
@@ -10,7 +10,7 @@ class mainWindow(Tk):
         self.style = ThemedStyle()
         self.geometry("800x400")
         self.title("Mark Processing 2022 - Student Portal")
-        self.iconp = PhotoImage(file="login_icon.png")
+        self.iconp = PhotoImage(file="images/login_icon.png")
         self.iconphoto(False, self.iconp)
         self.loginphoto = Label(text="Please Login to see more in this Screen!", font=("Merriweather", 20),
                                 background="#eb3434", borderwidth=5, relief=SUNKEN)
@@ -31,21 +31,37 @@ class userInfoFrame(Frame):
 
     def __init__(self, root):
         super().__init__(root, borderwidth=3, height=400, width=190, relief=RIDGE)
+        self.teacherID = 0
         self.namet = Entry(self, width=19, font=("Merriweather", 12))
         self.mailt = Entry(self, width=19, font=("Merriweather", 12))
         self.logint = Entry(self, width=19, font=("Merriweather", 12))
         self.classt = Entry(self, width=19, font=("Merriweather", 12))
         self.sect = Entry(self, width=19, font=("Merriweather", 12))
-        self.userimg = PhotoImage(file="user_icon.png")
+        self.userimg = PhotoImage(file="images/user_icon.png")
         self.__set_text()
         self.__place_widgets()
 
     def __set_text(self):
-        self.namet.insert(0, "Chandran Kumar")
-        self.mailt.insert(0, "gubharan@gmail.com")
-        self.logint.insert(0, "Login ID : 12961")
-        self.classt.insert(0, "Class : 12")
-        self.sect.insert(0, "Section : C")
+        print(self.teacherID)
+        self.namet.insert(0, "Not to be seen")
+        self.mailt.insert(0, "Not to be seen")
+        self.logint.insert(0, "Not to be seen")
+        self.classt.insert(0, "Not to be seen")
+        self.sect.insert(0, "Not to be seen")
+
+    def update_info(self):
+        info = session_info(self.teacherID)
+        clas,n,sec=info[2].partition("-")
+        self.namet.delete(0,END)
+        self.mailt.delete(0,END)
+        self.logint.delete(0,END)
+        self.classt.delete(0,END)
+        self.sect.delete(0,END)
+        self.namet.insert(0, info[0])
+        self.mailt.insert(0, info[1])
+        self.logint.insert(0, f"UniqueID : {info[3]}")
+        self.classt.insert(0, f"Class : {clas}")
+        self.sect.insert(0, f"Section: {sec}")
         self.namet.config(state=DISABLED)
         self.mailt.config(state=DISABLED)
         self.logint.config(state=DISABLED)
@@ -61,12 +77,16 @@ class userInfoFrame(Frame):
         self.sect.place(x=0, y=360)
 
 
-class markWindow(Frame):
+class markFrame(Frame):
     def __init__(self, root):
         super().__init__(root, borderwidth=3, height=400, width=410, relief=RIDGE)
-        self.topic_label = Label(self, text="Exams in batch year : 12-C 2022", font=("Ubuntu", 20), relief=GROOVE,
+        self.topic_label = Label(self,font=("Ubuntu", 20), relief=GROOVE,
                                  borderwidth=3)
         self.__place_widgets()
+
+    def set_title(self,cl):
+        self.topic_label.config(text=f"Exams in batch year : {cl} 2022")
+        self.topic_label.config(state=DISABLED)
 
     def __place_widgets(self):
         self.topic_label.place(x=2, y=0)

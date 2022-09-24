@@ -1,9 +1,10 @@
 from tkinter import Toplevel, Text, IntVar, Radiobutton, Button
 from student_scope import *
+from sqlConnectors import check_password
 
 container = mainWindow()
 infof = userInfoFrame(container)
-marksf = markWindow(container)
+marksf = markFrame(container)
 
 
 class topLevel(Toplevel):
@@ -19,8 +20,8 @@ class topLevel(Toplevel):
         super().__init__(root)
         self.style = ThemedStyle()
         self.geometry('500x375')
-        self.login_icon = PhotoImage(file="login_icon.png")
-        self.login_background = PhotoImage(file="login_background_edited.png")
+        self.login_icon = PhotoImage(file="images/login_icon.png")
+        self.login_background = PhotoImage(file="images/login_background_edited.png")
         self.title("Student Mark Processing - Login")
         self.iconphoto(False, self.login_icon)
         self.bgimg = Label(self, image=self.login_background)
@@ -46,23 +47,21 @@ class InfoFrame(Frame):
                                     background="#d4d4d2")
         self.idbox = Text(self, height=1, width=15, font=("lora", 15))
         self.passbox = Text(self, height=1, width=15, font=("lora", 15))
-        self.optionchooser = IntVar(self)
-        self.teacher = Radiobutton(self, text="Teacher", variable=self.optionchooser, value=0, font=("lora", 12),
-                                   background="#d4d4d2")
-        self.student = Radiobutton(self, text="Student", variable=self.optionchooser, value=1, font=("lora", 12),
-                                   background="#d4d4d2")
         self.loginbutt = Button(self, text="Login", command=self.check_correct_login)
         self.__place_widgets()
 
     def check_correct_login(self):
-        if (self.idbox.get(0.0, END).strip() == "Chandran") and (self.passbox.get(0.0, END).strip() == "12345") and (
-                self.optionchooser.get() == 1):
+        session=check_password(self.idbox.get(0.0, END).strip(),self.passbox.get(0.0, END).strip())
+        if session[1]:
             print("login successfull")
             login_page.destroy()
             container.remove_standby()
             infof.place(x=0, y=0)
+            marksf.set_title(session[2])
             marksf.place(x=190, y=0)
             container.change_theme("breeze")
+            infof.teacherID=session[0]
+            infof.update_info()
         else:
             self.incorrectlabel.config(text="Incorrect username/password!")
 
@@ -75,8 +74,6 @@ class InfoFrame(Frame):
         self.idbox.grid(row=0, column=1, sticky=W)
         self.passbox.grid(row=1, column=1, sticky=W)
         self.incorrectlabel.grid(row=2, column=0, columnspan=2)
-        self.teacher.grid(column=0, row=3, sticky=E)
-        self.student.grid(column=1, row=3, sticky=W)
         self.loginbutt.grid(row=4, column=1, sticky=W)
         self.place(x=120, y=140)
 
