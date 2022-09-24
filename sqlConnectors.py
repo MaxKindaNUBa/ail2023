@@ -27,6 +27,9 @@ def session_info(id):
     for i in mycursor:
         return i
 
+# DUD METHOD DUE TO CHANGE VERY SHORTLY
+def get_tests():
+    return ("Pre-MidTerm","MidTerm","Quatery","HalfYearly","MidTerm-2","MidTerm-3","Revision-1","Revision-2")
 
 '''mycursor.execute("SELECT * FROM teachers")
 for i in mycursor:

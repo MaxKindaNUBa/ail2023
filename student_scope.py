@@ -1,7 +1,9 @@
 from tkinter import Tk, PhotoImage
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
-from tkinter.ttk import Frame, Label, Entry
+from tkinter.ttk import Frame, Label, Entry,Button
+
+import sqlConnectors
 from sqlConnectors import session_info
 
 class mainWindow(Tk):
@@ -84,6 +86,25 @@ class markFrame(Frame):
                                  borderwidth=3)
         self.__place_widgets()
 
+    def show_Tests(self):
+        l = 0
+        b = 40
+        testList=sqlConnectors.get_tests()
+        condition = 0
+        while condition < len(testList):
+            if (l + 80) <= 400 and (b + 80) <= 400:
+                Button(self, text=testList[condition]).place(x=l, y=b, width=80,height=80)
+                l += 80
+                condition += 1
+            elif (l + 80) >= 400 and (b + 80) <= 400:
+                if b + 160 <= 400:
+                    l = 0
+                    b += 80
+                    Button(self, text=testList[condition]).place(x=l, y=b, width=80,height=80)
+
+                else:
+                    print(f"Placed {condition} buttons !")
+                    condition = 0
     def set_title(self,cl):
         self.topic_label.config(text=f"Exams in batch year : {cl} 2022")
         self.topic_label.config(state=DISABLED)

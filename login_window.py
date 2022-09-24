@@ -62,6 +62,7 @@ class InfoFrame(Frame):
             container.change_theme("breeze")
             infof.teacherID=session[0]
             infof.update_info()
+            marksf.show_Tests()
         else:
             self.incorrectlabel.config(text="Incorrect username/password!")
 
