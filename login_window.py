@@ -1,11 +1,11 @@
-from tkinter import Toplevel, Text, IntVar, Radiobutton, Button
+from tkinter import Toplevel, Text, Button
 from student_scope import *
 from sqlConnectors import check_password
 
 container = mainWindow()
 infof = userInfoFrame(container)
 marksf = markFrame(container)
-
+classInfo = ClassInfo(container)
 
 class topLevel(Toplevel):
     @staticmethod
@@ -52,17 +52,18 @@ class InfoFrame(Frame):
 
     def check_correct_login(self):
         session=check_password(self.idbox.get(0.0, END).strip(),self.passbox.get(0.0, END).strip())
-        if session[1]:
-            print("login successfull")
+        if session[1]==True:
             login_page.destroy()
             container.remove_standby()
             infof.place(x=0, y=0)
             marksf.set_title(session[2])
             marksf.place(x=190, y=0)
-            container.change_theme("breeze")
             infof.teacherID=session[0]
             infof.update_info()
             marksf.show_Tests()
+            classInfo.place(x=600,y=0)
+            classInfo.place_text()
+            container.change_theme("breeze")
         else:
             self.incorrectlabel.config(text="Incorrect username/password!")
 
