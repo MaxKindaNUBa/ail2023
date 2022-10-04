@@ -1,9 +1,54 @@
-from tkinter import Tk, PhotoImage
+from tkinter import Tk, PhotoImage, Listbox, Button
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
-from tkinter.ttk import Frame, Label, Entry,Button,Separator
+from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox,Scrollbar
 from testHandler import Test
-from sqlConnectors import session_info
+from sqlConnectors import session_info, get_classes, getStudentStats,get_tests,get_student_list
+
+
+class ClassInfo(Frame):
+    def __init__(self, root):
+        super().__init__(root, borderwidth=2, height=400, width=224, relief=GROOVE)
+        self.title = Label(self, text="Class Information", font=("Merriweather", 20), borderwidth=3, relief=GROOVE)
+
+        self.tottest = Entry(self, width=19, font=("Merriweather", 12))
+
+        self.testdate = Entry(self, width=19, font=("Merriweather", 12))
+        self.classavg = Entry(self, width=19, font=("Merriweather", 12))
+        self.nofail = Entry(self, width=19, font=("Merriweather", 12))
+        self.stdslist = Listbox(self,width=19,font=("Merriweather",12),activestyle=NONE)
+        self.totstds = Listbox(self, width=19, font=("Merriweather", 12), activestyle=NONE)
+        self.separator = Separator(self, orient='horizontal')
+        self.separator.place(x=0, y=170, width=224,height=10)
+        self.listscroll = Scrollbar(self)
+        self.__set_text()
+        self.title.place(x=0, y=0)
+
+    def __set_text(self):
+        self.tottest.insert(0, f"Tests : {len(get_tests())}")
+        self.tottest.config(state=DISABLED)
+
+    def update_class_info(self, clas):
+        self.totstds.delete(0, END)
+        for i in getStudentStats(clas):
+            self.totstds.insert(0, i)
+        self.stdslist.delete(0,END)
+        for i in get_student_list(clas)[::-1]:
+            self.stdslist.insert(0,i)
+
+    def place_text(self, clas):
+        for i in getStudentStats(clas):
+            self.totstds.insert(0, i)
+        for i in get_student_list(clas)[::-1]:
+            self.stdslist.insert(0,i)
+        self.totstds.place(x=0, y=40, width=220, height=80)
+        self.tottest.place(x=0, y=125, width=220)
+
+        self.stdslist.place(x=0,y=180,width=200,height=210)
+        self.listscroll.place(x=190,y=180,width=34,height=210)
+        self.stdslist.config(yscrollcommand=self.listscroll.set)
+        self.listscroll.config(command=self.stdslist.yview)
+
 
 class mainWindow(Tk):
     def __init__(self):
@@ -35,54 +80,42 @@ class userInfoFrame(Frame):
         self.namet = Entry(self, width=19, font=("Merriweather", 12))
         self.mailt = Entry(self, width=19, font=("Merriweather", 12))
         self.logint = Entry(self, width=19, font=("Merriweather", 12))
-        self.classt = Entry(self, width=19, font=("Merriweather", 12))
-        self.sect = Entry(self, width=19, font=("Merriweather", 12))
+        self.classSelectLabel = Entry(self, width=19, font=("Merriweather", 12))
+        self.classSelect = Combobox(self, width=18, font=("Merriweather", 12), state="readonly")
         self.userimg = PhotoImage(file="images/user_icon.png")
-        self.__set_text()
+        self.selectButton = Button(self, text="Select Class")
         self.__place_widgets()
 
-    def __set_text(self):
-        self.namet.insert(0, "Not to be seen")
-        self.mailt.insert(0, "Not to be seen")
-        self.logint.insert(0, "Not to be seen")
-        self.classt.insert(0, "Not to be seen")
-        self.sect.insert(0, "Not to be seen")
-
-    def update_info(self):
+    def update_info(self, clas):
         info = session_info(self.teacherID)
-        clas,n,sec=info[2].partition("-")
-        self.namet.delete(0,END)
-        self.mailt.delete(0,END)
-        self.logint.delete(0,END)
-        self.classt.delete(0,END)
-        self.sect.delete(0,END)
         self.namet.insert(0, info[0])
         self.mailt.insert(0, info[1])
-        self.logint.insert(0, f"Unique ID : {info[3]}")
-        self.classt.insert(0, f"Class : {clas}")
-        self.sect.insert(0, f"Section: {sec}")
+        self.logint.insert(0, f"Unique ID : {info[2]}")
+        self.classSelectLabel.insert(0, "Choose Class")
+        classes = get_classes()
+        self.classSelect["values"] = classes
+        self.classSelect.current(classes.index(clas))
         self.namet.config(state=DISABLED)
         self.mailt.config(state=DISABLED)
         self.logint.config(state=DISABLED)
-        self.classt.config(state=DISABLED)
-        self.sect.config(state=DISABLED)
+        self.classSelectLabel.config(state=DISABLED)
 
     def __place_widgets(self):
         Label(self, image=self.userimg, width=10).place(x=34, y=0)
         self.namet.place(x=0, y=126)
         self.mailt.place(x=0, y=156)
         self.logint.place(x=0, y=186)
-        self.classt.place(x=0, y=330)
-        self.sect.place(x=0, y=360)
-
+        self.classSelectLabel.place(x=0, y=230)
+        self.classSelect.place(x=0, y=264)
+        self.selectButton.place(x=0, y=300, width=185)
 
 class markFrame(Frame):
     def __init__(self, root):
         super().__init__(root, borderwidth=3, height=400, width=410, relief=RIDGE)
-        self.topic_label = Label(self,font=("Merriweather", 20), relief=GROOVE,
+        self.topic_label = Label(self,text=" Examinations in this year : 2022", font=("Merriweather", 20), relief=GROOVE,
                                  borderwidth=3)
         self.__place_widgets()
-        self.style=ThemedStyle()
+        self.style = ThemedStyle()
 
     @staticmethod
     def __getName__(button):
@@ -91,12 +124,12 @@ class markFrame(Frame):
     def show_Tests(self):
         l = 1
         b = 40
-        testObj=Test(self)
-        testList=testObj.returnTests()
+        testObj = Test(self)
+        testList = testObj.returnTests()
         condition = 0
         while condition < len(testList):
             if (l + 100) <= 401 and (b + 80) <= 400:
-                temp = Button(self,text=testList[condition])
+                temp = Button(self, text=testList[condition])
                 temp.config(command=lambda button=temp: self.__getName__(button))
                 temp.place(x=l, y=b, width=100, height=80)
                 l += 100
@@ -112,42 +145,7 @@ class markFrame(Frame):
                     print(f"Placed {condition} buttons !")
 
                     condition = 0
-    def set_title(self,cl):
-        self.topic_label.config(text=f"Exams in batch year : {cl} 2022")
-        self.topic_label.config(state=DISABLED)
+
 
     def __place_widgets(self):
         self.topic_label.place(x=2, y=0)
-
-class ClassInfo(Frame):
-    def __init__(self, root):
-        super().__init__(root,borderwidth=2,height=400,width=224,relief=GROOVE)
-        self.title=Label(self,text="Class Information",font=("Merriweather",20),borderwidth=3,relief=GROOVE)
-        self.title2 = Label(self, text="Test Information", font=("Merriweather", 20), borderwidth=3, relief=GROOVE)
-        self.totstds=Entry(self, width=19, font=("Merriweather", 12))
-        self.tottest=Entry(self, width=19, font=("Merriweather", 12))
-        self.testdate=Entry(self, width=19, font=("Merriweather", 12))
-        self.classavg=Entry(self, width=19, font=("Merriweather", 12))
-        self.nofail=Entry(self, width=19, font=("Merriweather", 12))
-        self.separator = Separator(self, orient='horizontal')
-        self.separator.place(x=0, y=200, width=224)
-        self.__set_text()
-        self.title.place(x=0, y=240)
-        self.title2.place(x=0,y=0)
-
-    def __set_text(self):
-        self.totstds.insert(0, "Students : 47")
-        self.tottest.insert(0, "Tests : 8")
-        self.testdate.insert(0, "Date : 29/9/2022")
-        self.classavg.insert(0, "Class Average : 67.5")
-        self.nofail.insert(0, "Failed : 10")
-
-    def place_text(self):
-        self.testdate.place(x=0, y=66,width=220)
-        self.classavg.place(x=0, y=96,width=220)
-        self.nofail.place(x=0, y=126,width=220)
-        self.totstds.place(x=0, y=330,width=220)
-        self.tottest.place(x=0, y=360,width=220)
-
-
-

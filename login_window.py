@@ -7,6 +7,7 @@ infof = userInfoFrame(container)
 marksf = markFrame(container)
 classInfo = ClassInfo(container)
 
+
 class topLevel(Toplevel):
     @staticmethod
     def __place_widgets(bgimg, topic):
@@ -51,19 +52,19 @@ class InfoFrame(Frame):
         self.__place_widgets()
 
     def check_correct_login(self):
-        session=check_password(self.idbox.get(0.0, END).strip(),self.passbox.get(0.0, END).strip())
-        if session[1]==True:
+        session = check_password(self.idbox.get(0.0, END).strip(), self.passbox.get(0.0, END).strip())
+        if session[1] == True:
             login_page.destroy()
             container.remove_standby()
             infof.place(x=0, y=0)
-            marksf.set_title(session[2])
             marksf.place(x=190, y=0)
-            infof.teacherID=session[0]
-            infof.update_info()
+            infof.teacherID = session[0]
+            infof.update_info(session[2])
             marksf.show_Tests()
-            classInfo.place(x=600,y=0)
-            classInfo.place_text()
+            classInfo.place(x=600, y=0)
+            classInfo.place_text(session[2])
             container.change_theme("breeze")
+            infof.selectButton.config(command=lambda: classInfo.update_class_info(infof.classSelect.get()))
         else:
             self.incorrectlabel.config(text="Incorrect username/password!")
 
