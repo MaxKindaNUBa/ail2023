@@ -56,5 +56,22 @@ def get_classes():
     return l
 
 def get_table(clas,test):
-    mycursor.execute(f"SELECT students.RollNO,StdName,students.Elective,Physics,Chemistry,Maths,English,{test}.Elective FROM students,midterm1 where students.rollno=midterm1.rollno and class='{clas}';")
+    mycursor.execute(f"SELECT students.RollNO,StdName,students.Elective,Physics,Chemistry,Maths,English,{test}.Elective FROM students,{test} where students.rollno={test}.rollno and class='{clas}';")
     return mycursor.fetchall()
+
+def get_no_failed(clas,exam):
+    roll = str(120 +ord(clas[3])-64)
+    mycursor.execute(f"select count(rollno) from {exam} where rollno like '{roll+'__'}' and (physics+chemistry+maths+english+elective)<=230;")
+    for i in mycursor:
+        return i[0]
+
+def get_code(name):
+    mycursor.execute(f"SELECT excode from exams where exname='{name}';")
+    for i in mycursor:
+        return i[0]
+
+def get_date(exam):
+    mycursor.execute(f"select exdate from exams where excode='{exam}';")
+    for i in mycursor:
+        return i[0].strftime('%d/%m/%Y')
+

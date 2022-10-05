@@ -3,9 +3,10 @@ from tkinter.constants import *
 from ttkthemes import ThemedStyle
 from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox,Scrollbar
 from testHandler import Test
-from sqlConnectors import session_info, get_classes, getStudentStats,get_tests,get_student_list
+from sqlConnectors import session_info, get_classes, getStudentStats,get_tests,get_student_list,get_code
+from reportCard import open_reportCard
 
-
+CLASS_IN_USE= ''
 class ClassInfo(Frame):
     def __init__(self, root):
         super().__init__(root, borderwidth=2, height=400, width=224, relief=GROOVE)
@@ -29,6 +30,8 @@ class ClassInfo(Frame):
         self.tottest.config(state=DISABLED)
 
     def update_class_info(self, clas):
+        global CLASS_IN_USE
+        CLASS_IN_USE=clas
         self.totstds.delete(0, END)
         for i in getStudentStats(clas):
             self.totstds.insert(0, i)
@@ -114,14 +117,17 @@ class markFrame(Frame):
         super().__init__(root, borderwidth=3, height=400, width=410, relief=RIDGE)
         self.topic_label = Label(self,text=" Examinations in this year : 2022", font=("Merriweather", 20), relief=GROOVE,
                                  borderwidth=3)
+        self.window=root
         self.__place_widgets()
         self.style = ThemedStyle()
 
-    @staticmethod
-    def __getName__(button):
+    def __getName__(self,button):
+        exam = get_code(button.cget("text"))
+        open_reportCard(self.window,CLASS_IN_USE,exam)
         print(button.cget("text"))
 
     def show_Tests(self):
+
         l = 1
         b = 40
         testObj = Test(self)

@@ -1,4 +1,6 @@
 from tkinter import Toplevel, Text, Button
+
+import student_scope
 from student_scope import *
 from sqlConnectors import check_password
 
@@ -60,6 +62,7 @@ class InfoFrame(Frame):
             marksf.place(x=190, y=0)
             infof.teacherID = session[0]
             infof.update_info(session[2])
+            student_scope.CLASS_IN_USE=session[2]
             marksf.show_Tests()
             classInfo.place(x=600, y=0)
             classInfo.place_text(session[2])
