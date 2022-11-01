@@ -1,12 +1,14 @@
 from tkinter import Tk, PhotoImage, Listbox, Button
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
-from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox,Scrollbar
+from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox, Scrollbar
 from testHandler import Test
-from sqlConnectors import session_info, get_classes, getStudentStats,get_tests,get_student_list,get_code
+from sqlConnectors import session_info, get_classes, getStudentStats, get_tests, get_student_list, get_code
 from reportCard import open_reportCard
 
-CLASS_IN_USE= ''
+CLASS_IN_USE = ''
+
+
 class ClassInfo(Frame):
     def __init__(self, root):
         super().__init__(root, borderwidth=2, height=400, width=224, relief=GROOVE)
@@ -17,10 +19,10 @@ class ClassInfo(Frame):
         self.testdate = Entry(self, width=19, font=("Merriweather", 12))
         self.classavg = Entry(self, width=19, font=("Merriweather", 12))
         self.nofail = Entry(self, width=19, font=("Merriweather", 12))
-        self.stdslist = Listbox(self,width=19,font=("Merriweather",12),activestyle=NONE)
+        self.stdslist = Listbox(self, width=19, font=("Merriweather", 12), activestyle=NONE)
         self.totstds = Listbox(self, width=19, font=("Merriweather", 12), activestyle=NONE)
         self.separator = Separator(self, orient='horizontal')
-        self.separator.place(x=0, y=170, width=224,height=10)
+        self.separator.place(x=0, y=170, width=224, height=10)
         self.listscroll = Scrollbar(self)
         self.__set_text()
         self.title.place(x=0, y=0)
@@ -31,24 +33,24 @@ class ClassInfo(Frame):
 
     def update_class_info(self, clas):
         global CLASS_IN_USE
-        CLASS_IN_USE=clas
+        CLASS_IN_USE = clas
         self.totstds.delete(0, END)
         for i in getStudentStats(clas):
             self.totstds.insert(0, i)
-        self.stdslist.delete(0,END)
+        self.stdslist.delete(0, END)
         for i in get_student_list(clas)[::-1]:
-            self.stdslist.insert(0,i)
+            self.stdslist.insert(0, i)
 
     def place_text(self, clas):
         for i in getStudentStats(clas):
             self.totstds.insert(0, i)
         for i in get_student_list(clas)[::-1]:
-            self.stdslist.insert(0,i)
+            self.stdslist.insert(0, i)
         self.totstds.place(x=0, y=40, width=220, height=80)
         self.tottest.place(x=0, y=125, width=220)
 
-        self.stdslist.place(x=0,y=180,width=200,height=210)
-        self.listscroll.place(x=190,y=180,width=34,height=210)
+        self.stdslist.place(x=0, y=180, width=200, height=210)
+        self.listscroll.place(x=190, y=180, width=34, height=210)
         self.stdslist.config(yscrollcommand=self.listscroll.set)
         self.listscroll.config(command=self.stdslist.yview)
 
@@ -112,18 +114,20 @@ class userInfoFrame(Frame):
         self.classSelect.place(x=0, y=264)
         self.selectButton.place(x=0, y=300, width=185)
 
+
 class markFrame(Frame):
     def __init__(self, root):
         super().__init__(root, borderwidth=3, height=400, width=410, relief=RIDGE)
-        self.topic_label = Label(self,text=" Examinations in this year : 2022", font=("Merriweather", 20), relief=GROOVE,
+        self.topic_label = Label(self, text=" Examinations in this year : 2022", font=("Merriweather", 20),
+                                 relief=GROOVE,
                                  borderwidth=3)
-        self.window=root
+        self.window = root
         self.__place_widgets()
         self.style = ThemedStyle()
 
-    def __getName__(self,button):
+    def __getName__(self, button):
         exam = get_code(button.cget("text"))
-        open_reportCard(self.window,CLASS_IN_USE,exam)
+        open_reportCard(self.window, CLASS_IN_USE, exam)
         print(button.cget("text"))
 
     def show_Tests(self):
@@ -151,7 +155,6 @@ class markFrame(Frame):
                     print(f"Placed {condition} buttons !")
 
                     condition = 0
-
 
     def __place_widgets(self):
         self.topic_label.place(x=2, y=0)
