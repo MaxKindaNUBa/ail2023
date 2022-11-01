@@ -59,11 +59,25 @@ def get_table(clas,test):
     mycursor.execute(f"SELECT students.RollNO,StdName,students.Elective,Physics,Chemistry,Maths,English,{test}.Elective FROM students,{test} where students.rollno={test}.rollno and class='{clas}';")
     return mycursor.fetchall()
 
-def get_no_failed(clas,exam):
+def get_no_failed(clas,exam,subject="ALL"):
     roll = str(120 +ord(clas[3])-64)
-    mycursor.execute(f"select count(rollno) from {exam} where rollno like '{roll+'__'}' and (physics+chemistry+maths+english+elective)<=230;")
+    if subject=="ALL":
+        mycursor.execute(f"select count(rollno) from {exam} where rollno like '{roll+'__'}' and (physics+chemistry+maths+english+elective)<=200;")
+    else:
+        mycursor.execute(f"select count(rollno) from {exam} where rollno like '{roll + '__'}' and {subject}<=40;")
     for i in mycursor:
         return i[0]
+
+def get_marks(clas,exam,subject="ALL"):
+    roll = str(120 + ord(clas[3]) - 64)
+    if subject=="ALL":
+        mycursor.execute(f"select physics+chemistry+maths+english+elective from {exam} where rollno like '{roll+'__'}'")
+    else:
+        mycursor.execute(f"select {subject} from {exam} where rollno like '{roll + '__'}'")
+    t=[]
+    for i in mycursor:
+        t+=i
+    return t
 
 def get_code(name):
     mycursor.execute(f"SELECT excode from exams where exname='{name}';")
@@ -74,4 +88,3 @@ def get_date(exam):
     mycursor.execute(f"select exdate from exams where excode='{exam}';")
     for i in mycursor:
         return i[0].strftime('%d/%m/%Y')
-

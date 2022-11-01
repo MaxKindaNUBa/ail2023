@@ -1,39 +1,31 @@
-from tkinter import *
-import colorutils
-
-container = Tk()
-container.geometry("800x800")
-def rgb_to_hex(percent):
-    r,g,b=0,0,0
-    if percent>=50:
-        g=255
-        r=b=4.5*(100-percent)
-    else:
-        r=255
-        g=b=4.5*percent
-
-    return colorutils.Color((r,g,b)).hex
-
-def packButtons(lenght,width):
-    l=0;b=0
-    condition = 1
-    while condition:
-        if (l+80) <= lenght and (b+80) <= width:
-            Button(container, text=f"{condition}\nMarks",bg=rgb_to_hex(condition)).place(x=l,y=b,width=80,height=80)
-            l += 80
-            condition += 1
-        elif (l+80) >= lenght and (b+80) <= width:
-            if b+160 <=width:
-                l = 0
-                b += 80
-                Button(container, text=f"{condition}\nMarks",bg=rgb_to_hex(condition)).place(x=l, y=b,width=80,height=80)
-
-            else:
-                print(f"Placed {condition-1} buttons !")
-                condition=0
+import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
+def remove_plot():
+    w.pack_forget()   # here you remove the widget from the tk window
+    # w.destroy()
 
 
-packButtons(800,800)
-container.mainloop()
+if __name__ == '__main__':
+
+    # data
+    x, y = [1, 2, 3, 4], [1, 4, 9, 16]
+
+    # matplotlib stuff
+    figure1 = plt.Figure(figsize=(6, 5), dpi=100)
+    ax1 = figure1.add_subplot(111)
+    ax1.plot(x, y)
+    ax1.set_title('Country Vs. GDP Per Capita')
+
+    # tkinter stuff
+    root = tk.Tk()
+
+    bar1 = FigureCanvasTkAgg(figure1, root)
+    w = bar1.get_tk_widget()
+    w.pack(side=tk.LEFT, fill=tk.BOTH)   # here you insert the widget in the tk window
+    button_delete = tk.Button(root, text='Remove Plot', command=remove_plot)
+    button_delete.place(height=30, width=100, rely=0.02, relx=0.4)   # place is an odd choice of geometry manager, you will have to adjust it every time the title changes
+
+    root.mainloop()
