@@ -1,11 +1,11 @@
-CREATE TABLE students22 (
+CREATE TABLE students (
   RollNo smallint primary key,
   StdName varchar(30) NOT NULL,
   Class char(4) DEFAULT NULL,
   Elective char(3) DEFAULT NULL
 ) ;
 
-insert into students22 (RollNO, StdName, Class, Elective) values
+insert into students (RollNO, StdName, Class, Elective) values
 (12101, 'Alie Pasterfield', '12-A', 'BIO'),
 (12102, 'Laurianne Fuller', '12-A', 'CSC'),
 (12103, 'Erinn Childs', '12-A', 'CSC'),
