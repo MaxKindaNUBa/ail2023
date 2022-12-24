@@ -2,13 +2,69 @@ from tkinter import Toplevel, Text, Button
 
 import student_scope
 from student_scope import *
-from sqlConnectors import check_password
+from sqlConnectors import check_password,register_teacher
+
 
 container = mainWindow()
 infof = userInfoFrame(container)
 marksf = markFrame(container)
 classInfo = ClassInfo(container)
 
+def register_new_teacher():
+    a = RegisterWindow()
+    a.mainloop()
+
+class RegisterWindow(Tk):
+    def __init__(self):
+        super(RegisterWindow, self).__init__()
+        self.title("Register a new teacher")
+        self.geometry("590x260")
+        self.titleL= Label(self,text="Add a new teacher!",font=("Merriweather",20),borderwidth=3,relief=RIDGE)
+
+        self.useridL= Label(self,text="User ID : ",font=("Merriweather",20))
+        self.passL = Label(self,text="Password:",font=("Merriweather",20))
+        self.mainL =Label(self,text="Mail ID:",font=("Merriweather",20))
+        self.classL =Label(self,text="Class : ",font=("Merriweather",20))
+        self.uniqueL = Label(self,text="Unique ID:",font=("Merriweather",20))
+
+        self.userT =Entry(self,width=30,font=("Merriweather",20))
+        self.passT=Entry(self,width=30,font=("Merriweather",20))
+        self.mainT=Entry(self,width=30,font=("Merriweather",20))
+        self.classT=Entry(self,width=30,font=("Merriweather",20))
+        self.uniqueT=Entry(self,width=30,font=("Merriweather",20))
+        self.registerbutt = Button(self,text="Register new teacher",
+                                   command=lambda: self.register_user(self.userT.get(),
+                                                                      self.passT.get(),
+                                                                      self.mainT.get(),
+                                                                      self.classT.get(),
+                                                                      self.uniqueT.get()))
+
+        self.place_stuff()
+    def register_user(self,user,pas,mail,clas,unid):
+        try:
+            register_teacher(user,pas,mail,clas,unid)
+            messagebox.showinfo("Success!",f"A new teacher {user} has been registered!")
+            self.destroy()
+        except:
+            messagebox.showerror("Teacher Add Error","Registration failed\nPlease try again.")
+
+
+
+    def place_stuff(self):
+        self.titleL.grid(row=0,column=0,columnspan=2)
+
+        self.useridL.grid(row=1,column=0)
+        self.passL.grid(row=2,column=0)
+        self.mainL.grid(row=3,column=0)
+        self.classL.grid(row=4,column=0)
+        self.uniqueL.grid(row=5,column=0)
+
+        self.userT.grid(row=1, column=1)
+        self.passT.grid(row=2, column=1)
+        self.mainT.grid(row=3, column=1)
+        self.classT.grid(row=4, column=1)
+        self.uniqueT.grid(row=5, column=1)
+        self.registerbutt.grid(row=6,column=0,columnspan=2,sticky=NSEW)
 
 class topLevel(Toplevel):
     @staticmethod
@@ -51,6 +107,7 @@ class InfoFrame(Frame):
         self.idbox = Text(self, height=1, width=15, font=("lora", 15))
         self.passbox = Text(self, height=1, width=15, font=("lora", 15))
         self.loginbutt = Button(self, text="Login", command=self.check_correct_login)
+        self.registerbutt = Button(self,text="Register",command=register_new_teacher)
         self.__place_widgets()
 
     def check_correct_login(self):
@@ -80,7 +137,8 @@ class InfoFrame(Frame):
         self.idbox.grid(row=0, column=1, sticky=W)
         self.passbox.grid(row=1, column=1, sticky=W)
         self.incorrectlabel.grid(row=2, column=0, columnspan=2)
-        self.loginbutt.grid(row=4, column=1, sticky=W)
+        self.loginbutt.grid(row=4, column=0, sticky=E)
+        self.registerbutt.grid(row=4,column=1,sticky=W)
         self.place(x=120, y=140)
 
 
