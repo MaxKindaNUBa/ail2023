@@ -1,12 +1,13 @@
-from tkinter import Toplevel, PhotoImage, Tk, LabelFrame, Frame
+from tkinter import Toplevel, PhotoImage, Tk, LabelFrame, Frame,messagebox
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
-from tkinter.ttk import Scrollbar, Treeview, Entry, Combobox, Button
-from sqlConnectors import get_table, get_no_failed, get_date, get_marks
+from tkinter.ttk import Scrollbar, Treeview, Entry, Combobox, Button,Label
+from sqlConnectors import get_table, get_no_failed, get_date, get_marks,add_student
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
 
+#FIX THE SLIDER TOMORROW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 def open_reportCard(toplevel_window, clas, test):
     level = markWindow(toplevel_window, clas, test)
@@ -27,6 +28,8 @@ class markWindow(Toplevel):
         self.selectionframe = self.get_frame()
         self.get_graph(self.exam, self.clas, "ALL")
 
+
+
         self.clasinfo = Entry(self, width=20, font=("Merriweather", 12))
         self.exdate = Entry(self, width=20, font=("Merriweather", 12))
         self.testname = Entry(self, width=20, font=("Merriweather", 12))
@@ -36,9 +39,20 @@ class markWindow(Toplevel):
         self.clasinfo.config(state=DISABLED, foreground="black")
         self.testname.config(state=DISABLED, foreground="black")
         self.exdate.config(state=DISABLED, foreground="black")
+
+        self.addstdbut = Button(self,text="Add students marks",command=self.refresh_marks)
+
         self.marktable = markTree(self, get_table(clas, exam))
+
         self.get_scrollbar()
         self.place_stuff()
+
+    def refresh_marks(self):
+        a = StudentAdd(self.exam)
+        a.mainloop()
+        self.marktable.destroy()
+        self.marktable = markTree(self,get_table(self.clas,self.exam))
+        self.marktable.place(x=10,y=10)
 
     def get_graph(self, exam, clas, graph="MD", subject="ALL"):
         try:
@@ -90,6 +104,7 @@ class markWindow(Toplevel):
         self.testname.place(x=10, y=300)
         self.exdate.place(x=10, y=330)
         self.selectionframe.place(x=205, y=270)
+        self.addstdbut.place(x=10,y=365,width=190)
 
 
 class markTree(Treeview):
@@ -182,3 +197,63 @@ class Graphs():
         toolbar.update()
         b = canvas.get_tk_widget()
         return a,b
+
+class StudentAdd(Tk):
+    def __init__(self,exam):
+        super(StudentAdd, self).__init__()
+        self.title("Adding student's marks to an exam")
+        self.geometry("600x400")
+
+        self.style = ThemedStyle()
+        self.style.theme_use("breeze")
+
+        self.exam = exam
+        self.titleL = Label(self,text="Add a student's marks into exam",font=("Merriweather",20),borderwidth=3,relief=RIDGE)
+        self.rollL = Label(self,text="Roll No:",font=("Merriweather",20))
+
+        self.phyL = Label(self,text="Physics marks :",font=("Merriweather",20))
+        self.chemL = Label(self,text="Chemistry marks:",font=("Merriweather",20))
+        self.mathL = Label(self,text="Maths marks: ",font=("Merriweather",20))
+        self.engL = Label(self,text="English marks: ",font=("Merriweather",20))
+        self.coreL = Label(self,text="Csc/Eg/Bio marks: ",font=("Merriweather",20))
+
+        self.addbutt = Button(self,text="Add student's marks ",width=20,command=self.add_std)
+        self.rollT=Entry(self,font=("Merriweather",20),width=20)
+        self.phyT=Entry(self,font=("Merriweather",20),width=20)
+        self.chemT=Entry(self,font=("Merriweather",20),width=20)
+        self.mathT=Entry(self,font=("Merriweather",20),width=20)
+        self.engT=Entry(self,font=("Merriweather",20),width=20)
+        self.coreT = Entry(self,font=("Merriweather",20),width=20)
+        self.place_stuff()
+
+    def add_std(self):
+        try:
+            add_student(self.exam,
+                        self.rollT.get(),
+                        self.phyT.get(),
+                        self.chemT.get(),
+                        self.mathT.get(),
+                        self.engT.get(),
+                        self.coreT.get())
+            messagebox.showinfo("Successfully added!", "Student has been \nsuccessfully added")
+        except:
+            messagebox.showerror("Student add unseccessfull","Student addition unsuccessfull\nPlease try again")
+
+
+
+
+    def place_stuff(self):
+        self.titleL.grid(row=0,column=0,columnspan=2)
+        self.rollL.grid(row=1,column=0)
+        self.rollT.grid(row=1,column=1)
+        self.phyL.grid(row=2,column=0)
+        self.phyT.grid(row=2,column=1)
+        self.chemL.grid(row=3,column=0)
+        self.chemT.grid(row=3,column=1)
+        self.mathL.grid(row=4,column=0)
+        self.mathT.grid(row=4,column=1)
+        self.engL.grid(row=5,column=0)
+        self.engT.grid(row=5,column=1)
+        self.coreL.grid(row=6,column=0)
+        self.coreT.grid(row=6,column=1)
+        self.addbutt.grid(row=7,column=0,columnspan=2)
