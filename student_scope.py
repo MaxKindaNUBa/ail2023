@@ -1,9 +1,9 @@
-from tkinter import Tk, PhotoImage, Listbox, Button,messagebox
+from tkinter import Tk, PhotoImage, Listbox, Button, messagebox
 from tkinter.constants import *
 from ttkthemes import ThemedStyle
 from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox, Scrollbar
 from testHandler import Test
-from sqlConnectors import session_info, get_classes, getStudentStats, get_tests, get_student_list, get_code,addExam
+from sqlConnectors import session_info, get_classes, getStudentStats, get_tests, get_student_list, get_code, addExam
 from reportCard import open_reportCard
 
 CLASS_IN_USE = ''
@@ -12,6 +12,7 @@ CLASS_IN_USE = ''
 def add_an_exam():
     ExamAdder().mainloop()
 
+
 class ExamAdder(Tk):
     def __init__(self):
         super(ExamAdder, self).__init__()
@@ -19,33 +20,36 @@ class ExamAdder(Tk):
         self.style.theme_use("breeze")
         self.geometry('570x150')
         self.title("Add another exam")
-        self.TitleLabel = Label(self,text="Add another exam to the database!!",font=("Merriweather",20),relief=RIDGE,borderwidth=3)
-        self.nameText = Entry(self, font=("Merriweather",20), width=27)
-        self.dateText= Entry(self,font=("Merriweather",20),width=27)
-        self.nameL = Label(self,text="Exam Name : ",font=("Merriweather",20),width=10)
-        self.dateL = Label(self,text="Exam Date : ",font=("Merriweather",20),width=10)
-        self.addButton=Button(self,text="Add Exam",command=lambda: self.add_exam(self.nameText.get(),self.dateText.get()))
+        self.TitleLabel = Label(self, text="Add another exam to the database!!", font=("Merriweather", 20),
+                                relief=RIDGE, borderwidth=3)
+        self.nameText = Entry(self, font=("Merriweather", 20), width=27)
+        self.dateText = Entry(self, font=("Merriweather", 20), width=27)
+        self.nameL = Label(self, text="Exam Name : ", font=("Merriweather", 20), width=10)
+        self.dateL = Label(self, text="Exam Date : ", font=("Merriweather", 20), width=10)
+        self.addButton = Button(self, text="Add Exam",
+                                command=lambda: self.add_exam(self.nameText.get(), self.dateText.get()))
         self.place_stuff()
         return
 
-    def add_exam(self,exname,exdate):
+    def add_exam(self, exname, exdate):
         try:
-            addExam(exname,exdate)
-            messagebox.showinfo("Success","Exam added successfully!")
+            addExam(exname, exdate)
+            messagebox.showinfo("Success", "Exam added successfully!")
             self.destroy()
 
             obj = markFrame.instances[0]
             obj.refresh_butons()
         except:
-            messagebox.showwarning("Exam Add Error","Exam was not added successfully!")
+            messagebox.showwarning("Exam Add Error", "Exam was not added successfully!")
 
     def place_stuff(self):
-        self.TitleLabel.grid(row=0,column=0,columnspan=2)
-        self.nameL.grid(row=1,column=0)
-        self.nameText.grid(row=1,column=1)
-        self.dateL.grid(row=2,column=0)
-        self.dateText.grid(row=2,column=1)
-        self.addButton.grid(row=3,column=0,columnspan=2,sticky=NSEW)
+        self.TitleLabel.grid(row=0, column=0, columnspan=2)
+        self.nameL.grid(row=1, column=0)
+        self.nameText.grid(row=1, column=1)
+        self.dateL.grid(row=2, column=0)
+        self.dateText.grid(row=2, column=1)
+        self.addButton.grid(row=3, column=0, columnspan=2, sticky=NSEW)
+
 
 class ClassInfo(Frame):
     def __init__(self, root):
@@ -154,20 +158,21 @@ class userInfoFrame(Frame):
 
 
 class markFrame(Frame):
-    instances=[]
+    instances = []
+
     def __init__(self, root):
         super().__init__(root, borderwidth=3, height=400, width=410, relief=RIDGE)
         self.topic_label = Label(self, text=" Examinations in this year : 2022", font=("Merriweather", 20),
                                  relief=GROOVE,
                                  borderwidth=3)
         self.exambuttons = []
-        self.examAddButton = Button(self,text="Add a new Examination",command=add_an_exam)
+        self.examAddButton = Button(self, text="Add a new Examination", command=add_an_exam)
         self.window = root
         self.__place_widgets()
         self.style = ThemedStyle()
 
     def __new__(cls, *args, **kwargs):
-        s=super(markFrame, cls).__new__(cls)
+        s = super(markFrame, cls).__new__(cls)
         markFrame.instances.append(s)
         return s
 
@@ -184,7 +189,7 @@ class markFrame(Frame):
         condition = 0
         while condition < len(testList):
             if (l + 100) <= 401 and (b + 80) <= 400:
-                temp = Button(self, text=testList[condition],name=testList[condition].lower())
+                temp = Button(self, text=testList[condition], name=testList[condition].lower())
                 temp.config(command=lambda button=temp: self.__getName__(button))
                 temp.place(x=l, y=b, width=100, height=80)
                 self.exambuttons.append(temp)
@@ -209,5 +214,5 @@ class markFrame(Frame):
         self.show_Tests()
 
     def __place_widgets(self):
-        self.examAddButton.place(x=2,y=350,height=40,width=410)
+        self.examAddButton.place(x=2, y=350, height=40, width=410)
         self.topic_label.place(x=2, y=0)

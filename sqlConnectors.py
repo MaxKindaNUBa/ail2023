@@ -103,25 +103,26 @@ def get_date(exam):
         return i[0].strftime('%d/%m/%Y')
 
 
-
-
-# THESE 2 NOT WORKINGGGGG
-def addExam(exname,exdate):
+def addExam(exname, exdate):
     n = len(get_tests())
-    code=''
+    code = ''
     for i in exname:
         if i.isalnum():
-            code+=i
-    mycursor.execute(f"insert into exams values({n+1},'{exname}','{exdate}','{code}');")
-    mycursor.execute(f"create table {code} (RollNO smallint primary key,Physics int,Chemistry int,Maths int,English int,Elective int);")
+            code += i
+    mycursor.execute(f"insert into exams values({n + 1},'{exname}','{exdate}','{code}');")
+    mycursor.execute(
+        f"create table {code} (RollNO smallint primary key,Physics int,Chemistry int,Maths int,English int,Elective int);")
     db.commit()
 
-def register_teacher(userid,password,mailid,clas,uniqueid):
+
+def register_teacher(userid, password, mailid, clas, uniqueid):
     mycursor.execute("select count(*) from teachers")
-    count= mycursor.fetchall()[0][0]
-    mycursor.execute(f"insert into teachers(TeacherID,UserID,Pass,MailID,Class,UniqueID) values ({count+1},'{userid}','{password}','{mailid}','{clas}','{uniqueid}')")
+    count = mycursor.fetchall()[0][0]
+    mycursor.execute(
+        f"insert into teachers(TeacherID,UserID,Pass,MailID,Class,UniqueID) values ({count + 1},'{userid}','{password}','{mailid}','{clas}','{uniqueid}')")
     db.commit()
 
-def add_student(exam,roll,phy,chem,mat,eng,core):
+
+def add_student(exam, roll, phy, chem, mat, eng, core):
     mycursor.execute(f"insert into {exam} values({roll},{phy},{chem},{mat},{eng},{core})")
     db.commit()
