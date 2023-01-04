@@ -24,7 +24,6 @@ def session_info(idd):
         return i
 
 
-# DUD METHOD DUE TO CHANGE VERY SHORTLY
 def get_tests():
     t = tuple()
     mycursor.execute("SELECT ExNAME FROM EXAMS ")
@@ -126,3 +125,15 @@ def register_teacher(userid, password, mailid, clas, uniqueid):
 def add_student(exam, roll, phy, chem, mat, eng, core):
     mycursor.execute(f"insert into {exam} values({roll},{phy},{chem},{mat},{eng},{core})")
     db.commit()
+
+def get_info(exam,roll):
+    mycursor.execute(f"select * from {exam} where rollno={roll};")
+    return mycursor.fetchall()[0]
+
+def modify_marks(exam,roll,p,c,m,e,co):
+    mycursor.execute(f"update {exam} set physics={p},chemistry={c},maths={m},english={e},elective={co} where rollno={roll};")
+    db.commit()
+
+def delete_marks(exam,roll):
+    print(f"delete from {exam} where rollno={roll}")
+    mycursor.execute(f"delete from {exam} where rollno={roll}")

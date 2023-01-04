@@ -5,13 +5,19 @@ from tkinter.ttk import Frame, Label, Entry, Button, Separator, Combobox, Scroll
 from testHandler import Test
 from sqlConnectors import session_info, get_classes, getStudentStats, get_tests, get_student_list, get_code, addExam
 from reportCard import open_reportCard
+from newButtons import StudentAdd,ModifyMarks,StudentDelete
 
 CLASS_IN_USE = ''
 
 
 def add_an_exam():
     ExamAdder().mainloop()
-
+def add_a_student():
+    StudentAdd().mainloop()
+def modify_marks():
+    ModifyMarks().mainloop()
+def delete_marks():
+    StudentDelete().mainloop()
 
 class ExamAdder(Tk):
     def __init__(self):
@@ -167,6 +173,10 @@ class markFrame(Frame):
                                  borderwidth=3)
         self.exambuttons = []
         self.examAddButton = Button(self, text="Add a new Examination", command=add_an_exam)
+        self.stdaddbut = Button(self,text="Add marks into exams",command=add_a_student)
+        self.modifybut = Button(self,text="Modify existing Marks",command=modify_marks)
+        self.deletebut = Button(self,text="Delete student Marks",command=delete_marks)
+
         self.window = root
         self.__place_widgets()
         self.style = ThemedStyle()
@@ -214,5 +224,8 @@ class markFrame(Frame):
         self.show_Tests()
 
     def __place_widgets(self):
-        self.examAddButton.place(x=2, y=350, height=40, width=410)
+        self.examAddButton.place(x=2, y=350, height=40, width=200)
+        self.stdaddbut.place(x=205,y=350,height=40,width=200)
+        self.modifybut.place(x=2,y=305,height=40,width=200)
+        self.deletebut.place(x=205,y=305,height=40,width=200)
         self.topic_label.place(x=2, y=0)
