@@ -10,10 +10,12 @@ mycursor = db.cursor()
 
 try:
     mycursor.execute("create table students(RollNo smallint primary key,StdName varchar(30) not null,Class char(4),Elective char(3))")
+    db.commit()
 except:
     pass
 try:
     mycursor.execute("create table teachers(TeacherID tinyint primary key,UserID varchar(50) unique,Pass varchar(20) unique,MailID varchar(50), Class char(4),UniqueID mediumint)")
+    db.commit()
 except:
     pass
 
