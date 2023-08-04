@@ -1,6 +1,6 @@
-# School's yearly project that is half completed !
+# School's yearly project (which is completed for now) !
 
-I'll work later when i learn more stuff !
+I'll work later when i learn more stuff (like a server deployment)!
 
 Run this in Python 3.9/3.10 only !
 
